@@ -8,5 +8,6 @@
   <description>Tools for handling manta storage</description>
   <modules>
   	<module>httpsigner</module>
+  	<module>client</module>
   </modules>
 </project>
