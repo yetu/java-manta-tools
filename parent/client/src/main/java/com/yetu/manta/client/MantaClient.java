@@ -23,6 +23,8 @@ public class MantaClient {
 
 	private final String login;
 
+	private String apiUrl;
+
 	// Read only access
 	public MantaClient(String login) throws IOException {
 		this(login, null, null);
@@ -31,12 +33,13 @@ public class MantaClient {
 	// R/W access
 	public MantaClient(String login, String keyPath, String keyFingerprint)
 			throws IOException {
+		this.apiUrl = DEFAULT_API_URL;
 		this.login = login;
 		if (keyPath != null && keyFingerprint != null) {
 			signer = new HttpSigner(login, keyPath, keyFingerprint);
 		}
 		RestAdapter.Builder builder = new RestAdapter.Builder();
-		builder.setEndpoint(DEFAULT_API_URL).setConverter(
+		builder.setEndpoint(apiUrl).setConverter(
 				new LineDelimitedJsonConverter());
 		if (this.signer != null) {
 			builder.setRequestInterceptor(new AuthorizationRequestInterceptor(
@@ -45,6 +48,14 @@ public class MantaClient {
 		RestAdapter restAdapter = builder.build();
 
 		mantaClient = restAdapter.create(MantaClientInterface.class);
+	}
+
+	public String getLogin() {
+		return login;
+	}
+
+	public boolean isReadOnly() {
+		return signer == null;
 	}
 
 	public Collection<MantaObject> listMantaObjects(String path) {
