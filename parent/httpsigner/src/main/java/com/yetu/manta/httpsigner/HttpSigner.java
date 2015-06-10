@@ -49,6 +49,13 @@ public class HttpSigner {
 
 	private final String fingerPrint;
 
+	/**
+	 * Create a new HttpSigner instance
+	 * @param login
+	 * @param keyPath Path to the private key
+	 * @param keyFingerPrint Fingerprint of the public key
+	 * @throws IOException
+	 */
 	public HttpSigner(String login, String keyPath, String keyFingerPrint)
 			throws IOException {
 		this.login = login;
@@ -56,7 +63,15 @@ public class HttpSigner {
 		this.keyPair = getKeyPair(keyPath);
 	}
 
-	public HttpSigner(String login, String keyPath, String keyFingerPrint,
+	/**
+	 * Create a new HttpSigner instance
+	 * @param login
+	 * @param keyFingerPrint
+	 * @param privateKeyContent String representation of the private key
+	 * @param password password to decrypt private key if necessary
+	 * @throws IOException
+	 */
+	public HttpSigner(String login, String keyFingerPrint,
 			String privateKeyContent, char[] password) throws IOException {
 		this.login = login;
 		this.fingerPrint = keyFingerPrint;
@@ -120,12 +135,10 @@ public class HttpSigner {
 	}
 
 	/**
-	 * Sign an {@link HttpRequest}.
-	 *
-	 * @param request
-	 *            The {@link HttpRequest} to sign.
-	 * @throws MantaCryptoException
-	 *             If unable to sign the request.
+	 * Create the value of the authorization header
+	 * @param headersToSign
+	 * @return String which can be used as value for the Authorization header
+	 * @throws HttpSignerException
 	 */
 	public String createAuthzHeaderValue(final Map<String, String> headersToSign)
 			throws HttpSignerException {
@@ -161,6 +174,11 @@ public class HttpSigner {
 		}
 	}
 
+	/**
+	 * Concatenate all given headers in order to be signed
+	 * @param headers
+	 * @return
+	 */
 	private String createStringToSign(final Map<String, String> headers) {
 		StringBuilder builder = new StringBuilder();
 		int headerCount = headers.size();
@@ -181,6 +199,11 @@ public class HttpSigner {
 		return builder.toString();
 	}
 
+	/**
+	 * Create list of signed headers
+	 * @param headers
+	 * @return
+	 */
 	private String createHeaderList(final Map<String, String> headers) {
 		StringBuilder builder = new StringBuilder();
 		int headerCount = headers.size();

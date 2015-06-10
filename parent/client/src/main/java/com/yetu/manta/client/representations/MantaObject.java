@@ -8,6 +8,8 @@ public class MantaObject {
 	private Long size;
 	private String etag;
 	private Integer durability;
+	
+	private String path;
 
 	public boolean isDirectory() {
 		return "directory".equals(type);
@@ -63,5 +65,9 @@ public class MantaObject {
 
 	public void setDurability(Integer durability) {
 		this.durability = durability;
+	}
+	
+	public String getPath(){
+		return path;
 	}
 }
