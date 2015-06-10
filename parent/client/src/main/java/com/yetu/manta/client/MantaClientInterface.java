@@ -18,26 +18,27 @@ public interface MantaClientInterface {
 	@PUT("/{user}/{path}")
 	@Headers("content-type: application/json; type=directory")
 	public void createDirectory(@Path("user") String user,
-			@Path("path") String path);
+			@Path(value = "path", encode = false) String path);
 
 	@DELETE("/{user}/{path}")
 	public void deleteDirectory(@Path("user") String user,
-			@Path("path") String path);
+			@Path(value = "path", encode = false) String path);
 
 	@PUT("/{user}/{path}")
 	@Headers("content-type: application/octet-stream")
-	public void putFile(@Path("user") String user, @Path("path") String path,
+	public void putFile(@Path("user") String user,
+			@Path(value = "path", encode = false) String path,
 			@Body TypedFile binaryObject);
 
 	@GET("/{user}/{path}")
 	public ArrayList<MantaObject> list(@Path("user") String user,
-			@Path("path") String path);
+			@Path(value = "path", encode = false) String path);
 
 	@GET("/{user}/{path}")
 	public Response getRawObject(@Path("user") String user,
-			@Path("path") String path);
+			@Path(value = "path", encode = false) String path);
 
 	@DELETE("/{user}/{path}")
 	public void deleteObject(@Path("user") String user,
-			@Path("path") String path);
+			@Path(value = "path", encode = false) String path);
 }

@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import retrofit.RestAdapter;
+import retrofit.RestAdapter.LogLevel;
 import retrofit.mime.TypedFile;
 
 import com.yetu.manta.client.converter.LineDelimitedJsonConverter;
