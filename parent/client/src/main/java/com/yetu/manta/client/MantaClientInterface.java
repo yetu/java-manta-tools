@@ -37,6 +37,10 @@ public interface MantaClientInterface {
 	@GET("/{user}/{path}")
 	public Response getRawObject(@Path("user") String user,
 			@Path(value = "path", encode = false) String path);
+	
+	@GET("/{user}/{path}")
+	public Response getObjectMetadata(@Path("user") String user,
+			@Path(value = "path", encode = false) String path);
 
 	@DELETE("/{user}/{path}")
 	public void deleteObject(@Path("user") String user,

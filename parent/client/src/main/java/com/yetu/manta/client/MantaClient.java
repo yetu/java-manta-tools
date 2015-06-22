@@ -8,6 +8,8 @@ import java.util.Collection;
 
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
+import retrofit.client.Header;
+import retrofit.client.Response;
 import retrofit.mime.TypedFile;
 
 import com.yetu.manta.client.converter.LineDelimitedJsonConverter;
@@ -29,6 +31,7 @@ public class MantaClient {
 	// Read only access
 	/**
 	 * Create a read only MantaClient
+	 * 
 	 * @param login
 	 * @throws IOException
 	 */
@@ -39,9 +42,12 @@ public class MantaClient {
 	// R/W access
 	/**
 	 * Create a MantaClient with the possibility of R/W access
+	 * 
 	 * @param login
-	 * @param keyPath Path to the private key
-	 * @param keyFingerprint Fingerprint of the public key
+	 * @param keyPath
+	 *            Path to the private key
+	 * @param keyFingerprint
+	 *            Fingerprint of the public key
 	 * @throws IOException
 	 */
 	public MantaClient(String login, String keyPath, String keyFingerprint)
@@ -58,13 +64,40 @@ public class MantaClient {
 			builder.setRequestInterceptor(new AuthorizationRequestInterceptor(
 					signer));
 		}
+		builder.setLogLevel(LogLevel.FULL);
 		RestAdapter restAdapter = builder.build();
 
 		mantaClient = restAdapter.create(MantaClientInterface.class);
 	}
 
+	public MantaObject getMantaObject(String path) {
+		Response response = mantaClient.getObjectMetadata(login, path);
+		MantaObject object = new MantaObject();
+		String contentType = null;
+		String etag = null;
+		for (Header h : response.getHeaders()) {
+			if ("Content-Type".equals(h.getName())) {
+				contentType = h.getValue();
+			} else if ("Etag".equals(h.getName())) {
+				etag = h.getValue();
+			}
+		}
+		String type = contentType.contains("type=directory") ? "directory"
+				: "object";
+		if (path.endsWith("/")) {
+			path = path.substring(0, path.length() - 1);
+		}
+		String name = path.substring(path.lastIndexOf('/') + 1);
+		object.setName(name);
+		object.setType(type);
+		object.setEtag(etag);
+		// TODO set other values if available
+		return object;
+	}
+
 	/**
 	 * Return login name
+	 * 
 	 * @return
 	 */
 	public String getLogin() {
@@ -73,6 +106,7 @@ public class MantaClient {
 
 	/**
 	 * Returns true if only read access of public areas is possible
+	 * 
 	 * @return
 	 */
 	public boolean isReadOnly() {
@@ -81,6 +115,7 @@ public class MantaClient {
 
 	/**
 	 * List all MantaObjects in given path (only works with directories)
+	 * 
 	 * @param path
 	 * @return
 	 */
@@ -90,6 +125,7 @@ public class MantaClient {
 
 	/**
 	 * Get InputStream of non-directory MantaObject at given Path
+	 * 
 	 * @param path
 	 * @return
 	 * @throws IOException
@@ -100,6 +136,7 @@ public class MantaClient {
 
 	/**
 	 * Upload the specified file to the specified path
+	 * 
 	 * @param path
 	 * @param file
 	 * @throws FileNotFoundException
@@ -111,6 +148,7 @@ public class MantaClient {
 
 	/**
 	 * Delete the MantaObject at the given path
+	 * 
 	 * @param path
 	 */
 	public void deleteFile(String path) {
