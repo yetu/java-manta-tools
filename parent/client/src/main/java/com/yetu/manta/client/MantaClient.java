@@ -8,8 +8,10 @@ import java.util.Collection;
 
 import retrofit.RestAdapter;
 import retrofit.RestAdapter.LogLevel;
+import retrofit.client.ApacheClient;
 import retrofit.client.Header;
 import retrofit.client.Response;
+import retrofit.client.UrlConnectionClient;
 import retrofit.mime.TypedFile;
 
 import com.yetu.manta.client.converter.LineDelimitedJsonConverter;
@@ -64,7 +66,6 @@ public class MantaClient {
 			builder.setRequestInterceptor(new AuthorizationRequestInterceptor(
 					signer));
 		}
-		builder.setLogLevel(LogLevel.FULL);
 		RestAdapter restAdapter = builder.build();
 
 		mantaClient = restAdapter.create(MantaClientInterface.class);
